@@ -1,3 +1,0 @@
-class KimoreHelpers:
-    pass
-    
