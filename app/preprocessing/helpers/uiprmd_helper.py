@@ -1,4 +1,3 @@
-import numpy as np
 import pandas as pd
 import numpy as np
 import os
@@ -44,10 +43,12 @@ def extract_info_from_filename(filename):
     subject_id = pieces[1]
     exercise_id = pieces[2]
 
+    # the label 1 is for correct, 2 is for incorrect
     label = 1
 
+    # if _inc is added at the end, the movement is incorrect
     if len(pieces) == 5:
-        label = 0
+        label = 2
 
     return movement_id, subject_id, exercise_id, label
 
