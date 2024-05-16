@@ -30,7 +30,7 @@ def read_data(dataset_path):
 
         subject_id, date_id, exercise_id, repetition, label, position = extract_info_from_filename(filename)
         # the labels = 3 are poorly executed and are not considered as part of the dataset
-        if label == 3:
+        if label == 2:
             continue
 
         current_exercise = read_txt_file(dataset_path + filename)
@@ -67,7 +67,7 @@ def extract_info_from_filename(filename):
     date_id = pieces[1]
     exercise_id = pieces[2]
     repetition_number = pieces[3]
-    label = int(pieces[4])
+    label = int(pieces[4]) - 1
 
     position_char = pieces[5]
 
