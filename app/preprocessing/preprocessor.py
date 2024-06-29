@@ -12,7 +12,10 @@ class Preprocessor:
         self.movement_ids = []
         self.subject_ids = []
         self.exercise_ids = []
-        self.target_length = 87
+        self.target_length = 120
+        self.x_train = []
+        self.x_test = []
+
 
     def preprocess(self):
         self.load()
@@ -21,6 +24,12 @@ class Preprocessor:
         print("Input data shape: ", len(self.x_data), len(self.x_data[0]), len(self.x_data[0][0]), len(self.x_data[0][0][0]))
         self.x_data = z_score_normalization(self.x_data)
         print("Input data shape: ", len(self.x_data), len(self.x_data[0]), len(self.x_data[0][0]), len(self.x_data[0][0][0]))
+
+        if self.dataset_name == "intellirehab":
+            self.x_data, self.labels = intellirehab_helper.downsampling(self.x_data, self.labels)
+
+            print("After downsampling: ", len(self.x_data), len(self.x_data[0]), len(self.x_data[0][0]),
+                  len(self.x_data[0][0][0]))
 
         # self.vizualize_3d_data_from_list(self.x_data)
 
@@ -50,12 +59,12 @@ class Preprocessor:
 
     def load_intellirehab(self):
         print("Processing intellirehab")
-        x_data, labels_numpy, subject_ids, exercise_ids, date_ids, repetitions, positions, labels = intellirehab_helper.read_data(self.dataset_path)
+        x_data, labels = intellirehab_helper.read_data(self.dataset_path)
         self.x_data = x_data
         self.labels = labels
         # self.movement_ids = movement_ids
-        self.subject_ids = subject_ids
-        self.exercise_ids = exercise_ids
+        # self.subject_ids = subject_ids
+        # self.exercise_ids = exercise_ids
 
         print("Finished processing")
 
@@ -93,7 +102,7 @@ class Preprocessor:
             vizualizer_helper.plot_frame_wrapper_single(output_data)
 
     def vizualize_3d_data_from_list(self, data):
-        vizualizer_helper.plot_frame_wrapper_single(data[0])
+        vizualizer_helper.plot_frame_wrapper_single(data[2])
 
     def convert_frame_to_2d(self, input_list):
         output_list = []

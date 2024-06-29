@@ -10,6 +10,9 @@ import os
 # RepetitionNumber: Each gesture was repeated several times and this shows the repetition number
 # CorrectLabel: A value of 1 represents a gesture labeled as being correctly executed, while a value of 2 is for a gesture labeled as incorrect
 # Position: Some of the persons performed the gestures sitting on a chair or wheelchair, while others standing
+from sklearn.utils import resample
+
+
 def read_data(dataset_path):
     all_files = os.listdir(dataset_path)
 
@@ -47,8 +50,33 @@ def read_data(dataset_path):
         labels.append(label)
 
     labels_numpy = np.array(labels)
+    return x_data, labels
 
-    return x_data, labels_numpy, subject_ids, exercise_ids, date_ids, repetitions, positions, labels
+def downsampling(x_data, labels):
+    x_data = np.array(x_data, dtype=np.float32)
+    labels = np.array(labels, dtype=np.float32)
+    unique_classes, class_counts = np.unique(labels, return_counts=True)
+    print("Counts: ", class_counts)
+
+    # Create a dictionary to store the data and labels for each class
+    class_data = {c: x_data[labels == c] for c in unique_classes}
+    class_labels = {c: labels[labels == c] for c in unique_classes}
+
+    min_count = min(class_counts)
+    downsampled_x = []
+    downsampled_y = []
+
+    for c in unique_classes:
+        x_class, y_class = resample(class_data[c], class_labels[c], replace=False, n_samples=min_count, random_state=42)
+        downsampled_x.extend(x_class)
+        downsampled_y.extend(y_class)
+
+    downsampled_y_numpy = np.array(downsampled_y, dtype=np.float32)
+
+    unique_classes, class_counts = np.unique(downsampled_y_numpy, return_counts=True)
+    print("Label counts after downsampling: ", class_counts)
+
+    return downsampled_x, downsampled_y
 
 def extract_info_from_filename(filename):
     '''
